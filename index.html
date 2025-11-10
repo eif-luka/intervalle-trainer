@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Intervalle Trainer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Intervalle Trainer</h1>
+      <div class="progress">
+        <span id="result-text">Drücke "Intervall abspielen"</span>
+        <span id="score">0%</span>
+      </div>
+    </header>
+
+    <main>
+      <button id="play-interval">🎵 Intervall Abspielen</button>
+      <div class="options" id="options-container"></div>
+    </main>
+
+    <footer>
+      <button onclick="showStats()">📊 Statistik</button>
+    </footer>
+  </div>
+
+  <script src="stats.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
