@@ -10,11 +10,7 @@ const intervals = [
   { name: "große Sexte", semitones: 9 },
   { name: "kleine Septime", semitones: 10 },
   { name: "große Septime", semitones: 11 },
-  { name: "reine Oktave", semitones: 12 },
-  { name: "kleine None", semitones: 13 },
-  { name: "große None", semitones: 14 },
-  { name: "kleine Dezime", semitones: 15 },
-  { name: "große Dezime", semitones: 16 }
+  { name: "reine Oktave", semitones: 12 }
 ];
 
 let currentInterval;
