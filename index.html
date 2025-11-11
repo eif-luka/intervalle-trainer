@@ -3,27 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Intervalle Trainer</title>
+  <title>Intervall Trainer</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="app">
     <header>
-      <h1>Intervalle Trainer</h1>
-      <div class="progress">
-        <span id="result-text">Drücke "Intervall abspielen"</span>
+      <h1>🎵 Intervall Trainer</h1>
+      <div class="status-bar">
+        <span id="result-text">Drücke "Abspielen"</span>
         <span id="score">0%</span>
       </div>
     </header>
 
     <main>
-      <button id="play-interval">🎵 Intervall Abspielen</button>
-      <div class="options" id="options-container"></div>
-    </main>
+      <div class="button-group">
+        <button id="play-interval">▶️ Abspielen</button>
+        <button id="repeat-interval">🔁 Wiederholen</button>
+        <button onclick="showStats()">📊 Statistik</button>
+      </div>
 
-    <footer>
-      <button onclick="showStats()">📊 Statistik</button>
-    </footer>
+      <div class="options" id="options-container">
+        <!-- Buttons werden hier dynamisch erzeugt -->
+      </div>
+    </main>
   </div>
 
   <script src="stats.js"></script>
