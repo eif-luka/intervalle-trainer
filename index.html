@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Intervall Trainer</title>
+  <title>Intervall Trainer – Klavier</title>
   <link rel="stylesheet" href="style.css" />
+  <!-- Soundfont-Player CDN -->
+  <script src="https://unpkg.com/soundfont-player@0.15.7/dist/soundfont-player.js"></script>
 </head>
 <body>
   <div class="app">
     <header>
-      <h1>🎵 Intervall Trainer</h1>
+      <h1>🎹 Intervall Trainer</h1>
       <div class="status-bar">
         <span id="result-text">Drücke "Abspielen"</span>
         <span id="score">0%</span>
@@ -24,7 +26,7 @@
       </div>
 
       <div class="options" id="options-container">
-        <!-- Buttons werden hier dynamisch erzeugt -->
+        <!-- Buttons werden hier erzeugt -->
       </div>
     </main>
   </div>

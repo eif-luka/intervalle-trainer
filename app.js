@@ -15,20 +15,28 @@ const intervals = [
 ];
 
 let currentInterval = null;
-let rootNote = 60; // Default MIDI note
+let rootNote = 60; // MIDI note (Middle C = 60)
 let correctCount = 0;
 let totalCount = 0;
+let piano = null;
 
-// Buttons
+// AudioContext vorbereiten
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+// Klavier laden
+Soundfont.instrument(audioCtx, 'acoustic_grand_piano').then(function (p) {
+  piano = p;
+  console.log("🎹 Klavier geladen");
+});
+
+// Buttons verbinden
 document.getElementById("play-interval").onclick = playNewInterval;
 document.getElementById("repeat-interval").onclick = repeatInterval;
 
 function playNewInterval() {
-  const random = intervals[Math.floor(Math.random() * intervals.length)];
-  currentInterval = random;
-  rootNote = 60 + Math.floor(Math.random() * 12); // Random MIDI note C4–B4
-
-  playInterval(rootNote, random.semitones);
+  currentInterval = intervals[Math.floor(Math.random() * intervals.length)];
+  rootNote = 60 + Math.floor(Math.random() * 12);
+  playInterval(rootNote, currentInterval.semitones);
   renderOptions();
 }
 
@@ -39,38 +47,18 @@ function repeatInterval() {
 }
 
 function playInterval(root, semitones) {
-  const freq1 = midiToFreq(root);
-  const freq2 = midiToFreq(root + semitones);
+  if (!piano) return;
 
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const note1 = root;
+  const note2 = root + semitones;
 
-  // Nacheinander spielen
-  playTone(ctx, freq1, 0);
-  playTone(ctx, freq2, 1);
+  // Erst nacheinander
+  piano.play(note1, audioCtx.currentTime + 0, { duration: 1 });
+  piano.play(note2, audioCtx.currentTime + 1, { duration: 1 });
 
-  // Zusammenklang danach
-  const togetherDelay = 2;
-  playTone(ctx, freq1, togetherDelay, 1.0);
-  playTone(ctx, freq2, togetherDelay, 1.0);
-}
-
-function playTone(ctx, freq, delay, duration = 0.8) {
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-
-  osc.type = "sine";
-  osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
-  gain.gain.setValueAtTime(0.3, ctx.currentTime + delay);
-
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-
-  osc.start(ctx.currentTime + delay);
-  osc.stop(ctx.currentTime + delay + duration);
-}
-
-function midiToFreq(n) {
-  return 440 * Math.pow(2, (n - 69) / 12);
+  // Dann zusammen
+  piano.play(note1, audioCtx.currentTime + 2.2, { duration: 1.2 });
+  piano.play(note2, audioCtx.currentTime + 2.2, { duration: 1.2 });
 }
 
 function renderOptions() {
@@ -98,7 +86,7 @@ function handleAnswer(selectedName) {
   }
 
   updateScore();
-  showVisualFeedback(selectedName);
+  showFeedback(selectedName);
   saveAnswer(currentInterval.name, correct);
 }
 
@@ -107,7 +95,7 @@ function updateScore() {
   document.getElementById("score").textContent = `${percent}%`;
 }
 
-function showVisualFeedback(selectedName) {
+function showFeedback(selectedName) {
   document.querySelectorAll(".option").forEach(opt => {
     if (opt.textContent === currentInterval.name) {
       opt.classList.add("correct");
