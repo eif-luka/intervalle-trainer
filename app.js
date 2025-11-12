@@ -1,3 +1,4 @@
+// Liste aller Intervalle bis Oktave
 const intervals = [
   { name: "Prime", semitones: 0 },
   { name: "kleine Sekunde", semitones: 1 },
@@ -11,54 +12,58 @@ const intervals = [
   { name: "große Sexte", semitones: 9 },
   { name: "kleine Septime", semitones: 10 },
   { name: "große Septime", semitones: 11 },
-  { name: "reine Oktave", semitones: 12 },
+  { name: "reine Oktave", semitones: 12 }
 ];
 
 let currentInterval = null;
-let rootNote = 60; // MIDI note (Middle C = 60)
+let rootNote = 60; // MIDI-Startnote
 let correctCount = 0;
 let totalCount = 0;
-let piano = null;
 
-// AudioContext vorbereiten
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+// Setup Soundfont
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+const ac = new AudioContext();
+let piano;
 
 // Klavier laden
-Soundfont.instrument(audioCtx, 'acoustic_grand_piano').then(function (p) {
-  piano = p;
-  console.log("🎹 Klavier geladen");
+Soundfont.instrument(ac, "acoustic_grand_piano").then(instrument => {
+  piano = instrument;
+  console.log("🎹 Klavier geladen!");
 });
 
-// Buttons verbinden
+// Button-Events
 document.getElementById("play-interval").onclick = playNewInterval;
 document.getElementById("repeat-interval").onclick = repeatInterval;
 
 function playNewInterval() {
-  currentInterval = intervals[Math.floor(Math.random() * intervals.length)];
-  rootNote = 60 + Math.floor(Math.random() * 12);
-  playInterval(rootNote, currentInterval.semitones);
+  if (!piano) return alert("Klavier lädt noch... bitte kurz warten 🎹");
+
+  const random = intervals[Math.floor(Math.random() * intervals.length)];
+  currentInterval = random;
+  rootNote = 60 + Math.floor(Math.random() * 12); // zufälliger Startton
+
+  playInterval(rootNote, random.semitones);
   renderOptions();
 }
 
 function repeatInterval() {
-  if (currentInterval) {
+  if (currentInterval && piano) {
     playInterval(rootNote, currentInterval.semitones);
   }
 }
 
 function playInterval(root, semitones) {
-  if (!piano) return;
+  const delay1 = ac.currentTime;
+  const delay2 = delay1 + 1.0;
+  const together = delay2 + 1.2;
 
-  const note1 = root;
-  const note2 = root + semitones;
-
-  // Erst nacheinander
-  piano.play(note1, audioCtx.currentTime + 0, { duration: 1 });
-  piano.play(note2, audioCtx.currentTime + 1, { duration: 1 });
-
-  // Dann zusammen
-  piano.play(note1, audioCtx.currentTime + 2.2, { duration: 1.2 });
-  piano.play(note2, audioCtx.currentTime + 2.2, { duration: 1.2 });
+  // Erste Note
+  piano.play(root, delay1, { duration: 1.0, gain: 0.8 });
+  // Zweite Note (Intervall)
+  piano.play(root + semitones, delay2, { duration: 1.0, gain: 0.8 });
+  // Beide zusammen
+  piano.play(root, together, { duration: 1.5, gain: 0.8 });
+  piano.play(root + semitones, together, { duration: 1.5, gain: 0.8 });
 }
 
 function renderOptions() {
@@ -86,7 +91,7 @@ function handleAnswer(selectedName) {
   }
 
   updateScore();
-  showFeedback(selectedName);
+  showVisualFeedback(selectedName);
   saveAnswer(currentInterval.name, correct);
 }
 
@@ -95,7 +100,7 @@ function updateScore() {
   document.getElementById("score").textContent = `${percent}%`;
 }
 
-function showFeedback(selectedName) {
+function showVisualFeedback(selectedName) {
   document.querySelectorAll(".option").forEach(opt => {
     if (opt.textContent === currentInterval.name) {
       opt.classList.add("correct");

@@ -2,7 +2,6 @@ function saveAnswer(name, isCorrect) {
   const stats = JSON.parse(localStorage.getItem("intervalStats") || "{}");
   const entry = stats[name] || { correct: 0, total: 0 };
 
-  // Ältere Antworten zählen weniger
   entry.correct = entry.correct * 0.95 + (isCorrect ? 1 : 0);
   entry.total = entry.total * 0.95 + 1;
 
